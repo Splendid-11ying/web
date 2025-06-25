@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>星遇 - 登录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "PingFang SC", "Helvetica Neue", Helvetica, "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+        }
+        
+        body {
+            width: 100vw;
+            height: 100vh;
+            background-color: #0f1a3b;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        
+        .login-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #04081a 0%, #061029 50%, #010310 100%);
+            overflow-y: auto;
+        }
+        
+        .content-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            width: 90%;
+            max-width: 900px;
+            padding: 20px 0;
+        }
+        
+        /* 星空背景 */
+        .stars-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 160px 120px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 230px 50px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 270px 100px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 320px 10px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 350px 80px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 400px 200px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 450px 150px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 500px 100px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 550px 300px, #ffffff, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 600px 600px;
+            animation: stars-animation 100s linear infinite;
+            opacity: 0.9;
+            z-index: 0;
+        }
+        
+        /* 流星效果 */
+        .shooting-star {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .shooting-star::before, .shooting-star::after {
+            content: "";
+            position: absolute;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(to right, rgba(158, 124, 252, 0), rgba(158, 124, 252, 0.8), rgba(255, 255, 255, 0.9));
+            border-radius: 50%;
+            animation: shooting 8s linear infinite;
+            top: 30%;
+            left: -10%;
+            opacity: 0;
+            transform: rotate(-45deg);
+        }
+        
+        .shooting-star::after {
+            animation-delay: 4s;
+            top: 60%;
+        }
+        
+        @keyframes shooting {
+            0% {
+                transform: translateX(0) rotate(-45deg);
+                opacity: 0;
+            }
+            2% {
+                opacity: 1;
+            }
+            10% {
+                transform: translateX(120vw) rotate(-45deg);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(120vw) rotate(-45deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes stars-animation {
+            from { transform: translateY(0); }
+            to { transform: translateY(-600px); }
+        }
+        
+        .login-box {
+            width: 50%;
+            max-width: 320px;
+            margin: 3vh auto 0;
+            padding: 20px 20px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 
+                       inset 0 1px 1px rgba(255, 255, 255, 0.1),
+                       inset 0 -1px 1px rgba(0, 0, 0, 0.1);
+            z-index: 2;
+            position: relative;
+            display: inline-block;
+            vertical-align: top;
+            margin-right: 2%;
+            margin-left: 8%;
+        }
+        
+        /* 星座图案装饰 */
+        .constellation-decoration {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0a2550 0%, #0a1a36 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(10, 37, 80, 0.4);
+            z-index: 3;
+        }
+        
+        .constellation-decoration::before {
+            content: "✨";
+            font-size: 24px;
+            color: white;
+        }
+        
+        /* 星座图 */
+        .constellations {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        .logo-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .logo {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #0a2550 0%, #0a1a36 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(10, 37, 80, 0.4);
+        }
+        
+        .logo::before {
+            content: "★";
+            font-size: 40px;
+            color: white;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+        }
+        
+        .title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 0 2px 10px rgba(10, 37, 80, 0.6);
+            margin-bottom: 3px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .form-area {
+            width: 100%;
+        }
+        
+        .input-item {
+            position: relative;
+            width: 100%;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.08);
+            margin-bottom: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .input-item::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #0a2550, #0a1a36);
+            transition: width 0.3s ease;
+        }
+        
+        .input-item:focus-within {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 15px rgba(10, 37, 80, 0.3);
+        }
+        
+        .input-item:focus-within::before {
+            width: 100%;
+        }
+        
+        .icon {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 20px;
+            margin-right: 10px;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        input {
+            flex: 1;
+            height: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #ffffff;
+            font-size: 16px;
+            padding-left: 5px;
+        }
+        
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .options-area {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+        }
+        
+        .forget-password {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .forget-password:hover {
+            color: #0a2550;
+            text-decoration: underline;
+        }
+        
+        .login-btn {
+            width: 100%;
+            height: 40px;
+            background: linear-gradient(90deg, #0a2550, #0a1a36);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(10, 37, 80, 0.4);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(10, 37, 80, 0.5);
+        }
+        
+        .login-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 10px rgba(10, 37, 80, 0.3);
+            background: linear-gradient(90deg, #071a38, #05142c);
+        }
+        
+        .register-area {
+            display: flex;
+            justify-content: center;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .register-link {
+            color: #0a2550;
+            margin-left: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .register-link:hover {
+            text-decoration: underline;
+            color: #0a3569;
+        }
+        
+        /* 设计说明部分 */
+        .design-notes {
+            width: 30%;
+            max-width: 300px;
+            margin: 3vh 8% 0 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 15px;
+            z-index: 2;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), 
+                       inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            position: relative;
+            display: inline-block;
+            vertical-align: top;
+        }
+        
+        .notes-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 10px;
+            text-align: center;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .notes-content {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .note-item {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+            line-height: 1.4;
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 6px;
+        }
+        
+        .note-item::before {
+            content: "•";
+            color: #0a2550;
+            margin-right: 8px;
+            font-size: 16px;
+        }
+        
+        /* 响应式设计 */
+        @media screen and (max-height: 700px) {
+            .login-box {
+                margin-top: 20px;
+                padding: 20px;
+            }
+            
+            .logo {
+                width: 60px;
+                height: 60px;
+                margin-bottom: 10px;
+            }
+            
+            .title {
+                font-size: 24px;
+            }
+            
+            .design-notes {
+                margin-top: 20px;
+            }
+        }
+        
+        /* 移动端样式优化 */
+        @media screen and (max-width: 360px) {
+            .login-box, .design-notes {
+                width: 92%;
+                padding: 20px 15px;
+            }
+            
+            .input-item {
+                height: 45px;
+            }
+            
+            .login-btn {
+                height: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="stars-bg"></div>
+        <div class="shooting-star"></div>
+        <div class="constellations"></div>
+        
+                        <div class="content-wrapper">
+            <div class="login-box">
+                <div class="constellation-decoration"></div>
+                <div class="logo-area">
+                    <div class="logo"></div>
+                    <h1 class="title">星遇</h1>
+                    <p class="subtitle">探索你的星座缘分</p>
+                </div>
+                
+                <div class="form-area">
+                    <div class="input-item">
+                        <span class="icon">👤</span>
+                        <input type="text" placeholder="请输入账号" id="username">
+                    </div>
+                    <div class="input-item">
+                        <span class="icon">🔒</span>
+                        <input type="password" placeholder="请输入密码" id="password">
+                    </div>
+                    
+                    <div class="options-area">
+                        <span class="forget-password">忘记密码?</span>
+                    </div>
+                    
+                    <button class="login-btn" id="login-btn">登录</button>
+                    
+                    <div class="register-area">
+                        <span>还没有账号？</span>
+                        <span class="register-link">立即注册</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 设计说明部分 -->
+            <div class="design-notes">
+                <h2 class="notes-title">设计说明</h2>
+                <div class="notes-content">
+                    <div class="note-item">星空背景：采用深蓝黑色渐变，增加星星数量和亮度，添加十二星座图，营造真实的夜空星空氛围</div>
+                    <div class="note-item">视觉层次：磨砂玻璃效果增加深度感与通透性，边缘光效提升质感</div>
+                    <div class="note-item">色彩方案：深蓝与亮白色形成对比，符合星座神秘感</div>
+                    <div class="note-item">交互细节：输入框聚焦时底部有渐变色进度条，按钮有悬停效果</div>
+                    <div class="note-item">星座元素：标志和装饰使用星形图案，增强主题相关性</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 简单的登录验证
+            document.getElementById('login-btn').addEventListener('click', function() {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                if (!username || !password) {
+                    alert('请输入账号和密码');
+                    return;
+                }
+                
+                // 这里只是模拟登录成功
+                alert('登录成功！');
+            });
+            
+            // 输入框获取焦点效果
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('active');
+                });
+                
+                input.addEventListener('blur', function() {
+                    if (!this.value) {
+                        this.parentElement.classList.remove('active');
+                    }
+                });
+            });
+            
+            // 随机生成额外的星星
+            const starsContainer = document.querySelector('.stars-bg');
+            if (starsContainer) {
+                let starsHtml = '';
+                for (let i = 0; i < 100; i++) {
+                    const x = Math.random() * 100;
+                    const y = Math.random() * 100;
+                    const size = Math.random() * 1 + 0.5;
+                    const opacity = Math.random() * 0.7 + 0.3;
+                    
+                    starsHtml += `<div style="
+                        position: absolute;
+                        top: ${y}%;
+                        left: ${x}%;
+                        width: ${size}px;
+                        height: ${size}px;
+                        background: white;
+                        opacity: ${opacity};
+                        border-radius: 50%;
+                        box-shadow: 0 0 ${size * 3}px rgba(255, 255, 255, 0.9);
+                        animation: twinkle ${Math.random() * 3 + 2}s infinite alternate;
+                    "></div>`;
+                }
+                
+                starsContainer.innerHTML += starsHtml;
+            }
+            
+            // 星星闪烁效果
+            const style = document.createElement('style');
+            style.innerHTML = `
+                @keyframes twinkle {
+                    0% { opacity: 0.3; }
+                    100% { opacity: 1; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // 添加十二星座图
+            const constellationsContainer = document.querySelector('.constellations');
+            if (constellationsContainer) {
+                const constellations = [
+                    { name: "白羊座", points: [[10, 15], [15, 20], [20, 25], [25, 20], [30, 15]] },
+                    { name: "金牛座", points: [[40, 10], [45, 15], [50, 15], [55, 10], [50, 5], [45, 5]] },
+                    { name: "双子座", points: [[70, 10], [75, 15], [80, 20], [85, 15], [90, 10], [85, 5], [80, 5], [75, 5]] },
+                    { name: "巨蟹座", points: [[15, 40], [20, 45], [25, 45], [30, 40], [25, 35], [20, 35]] },
+                    { name: "狮子座", points: [[45, 40], [50, 45], [55, 45], [60, 40], [55, 35], [50, 35], [45, 35]] },
+                    { name: "处女座", points: [[75, 40], [80, 45], [85, 45], [90, 40], [85, 35], [80, 35], [75, 35]] },
+                    { name: "天秤座", points: [[10, 70], [15, 75], [20, 75], [25, 70], [20, 65], [15, 65]] },
+                    { name: "天蝎座", points: [[40, 70], [45, 75], [50, 75], [55, 70], [60, 65], [55, 60], [50, 65]] },
+                    { name: "射手座", points: [[70, 70], [75, 75], [80, 75], [85, 70], [90, 65]] },
+                    { name: "摩羯座", points: [[15, 90], [20, 95], [25, 95], [30, 90], [25, 85]] },
+                    { name: "水瓶座", points: [[45, 90], [50, 95], [55, 95], [60, 90], [55, 85], [50, 85], [45, 85]] },
+                    { name: "双鱼座", points: [[75, 90], [80, 95], [85, 95], [90, 90], [85, 85], [80, 85], [75, 85]] }
+                ];
+                
+                let constellationsHtml = '';
+                
+                constellations.forEach(constellation => {
+                    // 星点
+                    constellation.points.forEach(point => {
+                        constellationsHtml += `<div class="star" style="
+                            position: absolute;
+                            top: ${point[1]}vh;
+                            left: ${point[0]}vw;
+                            width: 2px;
+                            height: 2px;
+                            background: white;
+                            border-radius: 50%;
+                            box-shadow: 0 0 3px rgba(255, 255, 255, 0.9);
+                        "></div>`;
+                    });
+                    
+                    // 连线
+                    for (let i = 0; i < constellation.points.length - 1; i++) {
+                        const p1 = constellation.points[i];
+                        const p2 = constellation.points[i + 1];
+                        
+                        // 计算线段位置和长度
+                        const length = Math.sqrt(Math.pow(p2[0] - p1[0], 2) + Math.pow(p2[1] - p1[1], 2));
+                        const angle = Math.atan2(p2[1] - p1[1], p2[0] - p1[0]) * 180 / Math.PI;
+                        
+                        constellationsHtml += `<div style="
+                            position: absolute;
+                            top: ${p1[1]}vh;
+                            left: ${p1[0]}vw;
+                            width: ${length}vw;
+                            height: 1px;
+                            background: rgba(255, 255, 255, 0.2);
+                            transform: rotate(${angle}deg);
+                            transform-origin: 0 0;
+                            z-index: 0;
+                        "></div>`;
+                    }
+                    
+                    // 星座名称
+                    const centerX = constellation.points.reduce((sum, p) => sum + p[0], 0) / constellation.points.length;
+                    const centerY = constellation.points.reduce((sum, p) => sum + p[1], 0) / constellation.points.length;
+                    
+                    constellationsHtml += `<div style="
+                        position: absolute;
+                        top: ${centerY + 2}vh;
+                        left: ${centerX - 2}vw;
+                        color: rgba(255, 255, 255, 0.3);
+                        font-size: 8px;
+                        text-shadow: 0 0 2px white;
+                    ">${constellation.name}</div>`;
+                });
+                
+                constellationsContainer.innerHTML = constellationsHtml;
+            }
+        });
+    </script>
+</body>
+</html> 
